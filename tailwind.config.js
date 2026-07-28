@@ -1,9 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        pitch: {
+          DEFAULT: '#2e7d32',
+          dark: '#1b5e20',
+        },
+      },
+    },
   },
   plugins: [],
-}
-
+};
