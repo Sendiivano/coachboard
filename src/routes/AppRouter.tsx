@@ -4,6 +4,8 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { LoginPage } from '@/pages/LoginPage';
 import { SignupPage } from '@/pages/SignupPage';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { TeamsPage } from '@/pages/TeamsPage';
+import { TeamDetailPage } from '@/pages/TeamDetailPage';
 
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -13,7 +15,11 @@ const router = createBrowserRouter([
     children: [
       {
         element: <AppLayout />,
-        children: [{ path: '/dashboard', element: <DashboardPage /> }],
+        children: [
+          { path: '/dashboard', element: <DashboardPage /> },
+          { path: '/teams', element: <TeamsPage /> },
+          { path: '/teams/:teamId', element: <TeamDetailPage /> },
+        ],
       },
     ],
   },
