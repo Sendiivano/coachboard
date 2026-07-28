@@ -6,10 +6,12 @@ import { SignupPage } from '@/pages/SignupPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { TeamsPage } from '@/pages/TeamsPage';
 import { TeamDetailPage } from '@/pages/TeamDetailPage';
+import { TacticalBoardPage } from '@/pages/TacticalBoardPage';
 
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   { path: '/signup', element: <SignupPage /> },
+  { path: '/board', element: <TacticalBoardPage /> },
   {
     element: <ProtectedRoute />,
     children: [
