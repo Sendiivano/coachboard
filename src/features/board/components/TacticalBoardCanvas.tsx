@@ -19,13 +19,14 @@ import type { ArrowElement } from '../types/drawing.types';
 
 interface TacticalBoardCanvasProps {
   players: Player[];
+  onStageReady?: (stage: Konva.Stage) => void;
 }
 
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 3;
 const ZOOM_STEP = 1.05;
 
-export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
+export function TacticalBoardCanvas({ players, onStageReady }: TacticalBoardCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: PITCH_WIDTH, height: PITCH_HEIGHT });
   const [pendingArrowStart, setPendingArrowStart] = useState<{ x: number; y: number } | null>(null);
@@ -182,6 +183,9 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
       onDrop={handleDrop}
     >
       <Stage
+        ref={(node) => {
+          if (node) onStageReady?.(node);
+        }}
         width={containerSize.width}
         height={containerSize.height}
         scaleX={displayScale}

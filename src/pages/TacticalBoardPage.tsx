@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import type Konva from 'konva';
 import { usePlayers } from '@/features/team/hooks/usePlayers';
 import { useTeam } from '@/features/team/hooks/useTeam';
 import { useBoardStore } from '@/features/board/store/boardStore';
@@ -14,12 +15,14 @@ import { Button } from '@/components/ui/Button';
 import { DrawingToolbar } from '@/features/board/components/DrawingToolbar';
 import { FormationSaveControls } from '@/features/board/components/FormationSaveControls';
 import { FormationLoadDropdown } from '@/features/board/components/FormationLoadDropdown';
+import { ExportControls } from '@/features/board/components/ExportControls';    
 import { useUndoRedoShortcuts } from '@/features/board/hooks/useUndoRedoShortcuts';
 
 export function TacticalBoardPage() {
   useUndoRedoShortcuts();
   const { teamId } = useParams<{ teamId: string }>();
   const AUTO_CENTER_DELAY_MS = 2000;
+  const stageRef = useRef<Konva.Stage | null>(null);
   const { data: team, isLoading: isTeamLoading } = useTeam(teamId);
   const { data: players, isLoading: isPlayersLoading } = usePlayers(teamId);
   const resetView = useBoardStore((state) => state.resetView);
@@ -62,6 +65,7 @@ export function TacticalBoardPage() {
           {teamId && <FormationSaveControls teamId={teamId} />}
         </div>
         <div className="flex gap-2 flex-wrap">
+          {team && <ExportControls stageRef={stageRef} teamName={team.name} />}
           <Button variant="secondary" onClick={toggleOpposition}>
             {isOppositionVisible ? 'Hide opposition' : 'Show opposition'}
           </Button>
@@ -82,7 +86,7 @@ export function TacticalBoardPage() {
       <DrawingToolbar />
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 min-w-0">
-          <TacticalBoardCanvas players={players} />
+          <TacticalBoardCanvas players={players} onStageReady={(stage) => (stageRef.current = stage)} />
         </div>
         <aside className="w-full lg:w-64 lg:shrink-0">
           <h2 className="text-sm font-semibold text-gray-700 mb-2">Roster</h2>
