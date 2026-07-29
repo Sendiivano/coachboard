@@ -9,6 +9,7 @@ import { RosterSidebar } from '@/features/board/components/RosterSidebar';
 import { computeDefaultPositions } from '@/features/board/utils/formationLayout';
 import { PITCH_WIDTH, PITCH_HEIGHT } from '@/features/board/constants';
 import { Button } from '@/components/ui/Button';
+import { DrawingToolbar } from '@/features/board/components/DrawingToolbar';
 
 export function TacticalBoardPage() {
   const { teamId } = useParams<{ teamId: string }>();
@@ -53,6 +54,7 @@ export function TacticalBoardPage() {
         Scroll to zoom, drag to pan, drag players onto the pitch. Dragging a player off the pitch sends them
         back to the bench.
       </p>
+      <DrawingToolbar />
       <div className="flex gap-6">
         <div className="flex-1">
           <TacticalBoardCanvas players={players} />

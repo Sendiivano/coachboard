@@ -4,11 +4,17 @@ import type Konva from 'konva';
 import { Pitch } from './Pitch';
 import { PlayerToken } from './PlayerToken';
 import { OppositionToken } from './OppositionToken';
+import { ConeShape } from './ConeShape';
+import { FootballShape } from './FootballShape';
+import { TextLabelShape } from './TextLabelShape';
+import { ArrowShape } from './ArrowShape';
 import { useBoardStore } from '../store/boardStore';
 import { useFormationStore } from '../store/formationStore';
 import { useOppositionStore } from '../store/oppositionStore';
+import { useDrawingStore } from '../store/drawingStore';
 import { PITCH_WIDTH, PITCH_HEIGHT, isWithinPitch } from '../constants';
 import type { Player } from '@/features/team/types/team.types';
+import type { ArrowElement } from '../types/drawing.types';
 
 interface TacticalBoardCanvasProps {
   players: Player[];
@@ -21,6 +27,7 @@ const ZOOM_STEP = 1.05;
 export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: PITCH_WIDTH, height: PITCH_HEIGHT });
+  const [pendingArrowStart, setPendingArrowStart] = useState<{ x: number; y: number } | null>(null);
 
   const scale = useBoardStore((state) => state.scale);
   const position = useBoardStore((state) => state.position);
@@ -33,6 +40,10 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
 
   const isOppositionVisible = useOppositionStore((state) => state.isVisible);
   const oppositionMarkers = useOppositionStore((state) => state.markers);
+
+  const selectedTool = useDrawingStore((state) => state.selectedTool);
+  const drawingElements = useDrawingStore((state) => state.elements);
+  const addElement = useDrawingStore((state) => state.addElement);
 
   useEffect(() => {
     function updateSize() {
@@ -72,13 +83,67 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
     });
   }
 
-  function handleDragEnd(event: Konva.KonvaEventObject<DragEvent>) {
+  function handleStageDragEnd(event: Konva.KonvaEventObject<DragEvent>) {
     if (event.target === event.target.getStage()) {
       setPosition({ x: event.target.x(), y: event.target.y() });
     }
   }
 
   const displayScale = (containerSize.width / PITCH_WIDTH) * scale;
+
+  function getPitchPointerPosition(stage: Konva.Stage): { x: number; y: number } | null {
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return null;
+    return {
+      x: (pointer.x - position.x) / displayScale,
+      y: (pointer.y - position.y) / displayScale,
+    };
+  }
+
+  function handleStageMouseDown(event: Konva.KonvaEventObject<MouseEvent>) {
+    if (selectedTool === 'select') return;
+    const stage = event.target.getStage();
+    if (!stage) return;
+    const point = getPitchPointerPosition(stage);
+    if (!point || !isWithinPitch(point.x, point.y)) return;
+
+    if (selectedTool === 'arrow') {
+      setPendingArrowStart(point);
+      return;
+    }
+
+    if (selectedTool === 'cone') {
+      addElement({ id: crypto.randomUUID(), type: 'cone', x: point.x, y: point.y });
+    } else if (selectedTool === 'football') {
+      addElement({ id: crypto.randomUUID(), type: 'football', x: point.x, y: point.y });
+    } else if (selectedTool === 'text') {
+      const text = prompt('Label text:', 'Note');
+      if (text) {
+        addElement({ id: crypto.randomUUID(), type: 'text', x: point.x, y: point.y, text });
+      }
+    }
+    // Tool stays active — coach can place multiple in a row until they switch tools manually.
+  }
+
+  function handleStageMouseUp(event: Konva.KonvaEventObject<MouseEvent>) {
+    if (selectedTool !== 'arrow' || !pendingArrowStart) return;
+    const stage = event.target.getStage();
+    if (!stage) return;
+    const point = getPitchPointerPosition(stage);
+    if (!point) {
+      setPendingArrowStart(null);
+      return;
+    }
+
+    const arrow: ArrowElement = {
+      id: crypto.randomUUID(),
+      type: 'arrow',
+      points: [pendingArrowStart.x, pendingArrowStart.y, point.x, point.y],
+    };
+    addElement(arrow);
+    setPendingArrowStart(null);
+    // Arrow tool stays active — coach can draw several arrows in a row.
+  }
 
   function handleDrop(event: React.DragEvent) {
     event.preventDefault();
@@ -92,8 +157,6 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
     const pitchX = (dropX - position.x) / displayScale;
     const pitchY = (dropY - position.y) / displayScale;
 
-    // A drop from the sidebar that lands outside the pitch is simply ignored —
-    // the player just stays on the bench rather than getting a half-set position.
     if (!isWithinPitch(pitchX, pitchY)) {
       removePlayerPosition(playerId);
       return;
@@ -101,6 +164,8 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
 
     setPlayerPosition(playerId, { x: pitchX, y: pitchY });
   }
+
+  const isDrawingToolActive = selectedTool !== 'select';
 
   return (
     <div
@@ -116,10 +181,12 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
         scaleY={displayScale}
         x={position.x}
         y={position.y}
-        draggable
+        draggable={!isDrawingToolActive}
         onWheel={handleWheel}
-        onDragEnd={handleDragEnd}
-        className="rounded-lg border border-gray-300 shadow-sm"
+        onDragEnd={handleStageDragEnd}
+        onMouseDown={handleStageMouseDown}
+        onMouseUp={handleStageMouseUp}
+        className={`rounded-lg border border-gray-300 shadow-sm ${isDrawingToolActive ? 'cursor-crosshair' : ''}`}
       >
         <Layer>
           <Pitch width={PITCH_WIDTH} height={PITCH_HEIGHT} />
@@ -138,6 +205,15 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
             ))}
           </Layer>
         )}
+        <Layer>
+          {drawingElements.map((element) => {
+            if (element.type === 'cone') return <ConeShape key={element.id} element={element} />;
+            if (element.type === 'football') return <FootballShape key={element.id} element={element} />;
+            if (element.type === 'text') return <TextLabelShape key={element.id} element={element} />;
+            if (element.type === 'arrow') return <ArrowShape key={element.id} element={element} />;
+            return null;
+          })}
+        </Layer>
       </Stage>
     </div>
   );
