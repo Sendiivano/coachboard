@@ -1,0 +1,3 @@
+auto delay recenter only work once i want it to work everytime i move the pitch 
+for previously added roster still wont auto add to starter player
+the touch for phones and ipads worked

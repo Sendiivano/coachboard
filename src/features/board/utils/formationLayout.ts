@@ -1,43 +1,57 @@
 import type { Player } from '@/features/team/types/team.types';
+import type { SportType, PlayerPosition } from '@/features/team/types/team.types';
 
 export interface PitchPosition {
   x: number;
   y: number;
 }
 
-// Depth (x-axis) fraction per position group — goal to attack, left to right.
-const POSITION_X_FRACTION: Record<string, number> = {
+const POSITION_X_FRACTION: Record<PlayerPosition, number> = {
   GK: 0.08,
   DF: 0.3,
   MF: 0.55,
   FW: 0.85,
 };
 
-const DEFAULT_GROUP = 'MF';
+const SPORT_FORMATIONS: Record<SportType, Record<PlayerPosition, number>> = {
+  football: { GK: 1, DF: 4, MF: 3, FW: 3 },
+  futsal: { GK: 1, DF: 2, MF: 1, FW: 1 },
+  mini_soccer: { GK: 1, DF: 2, MF: 3, FW: 1 },
+};
 
-function groupByPosition(players: Player[]): Record<string, Player[]> {
-  const groups: Record<string, Player[]> = {};
+function isPlayerPosition(value: string | null): value is PlayerPosition {
+  return value === 'GK' || value === 'DF' || value === 'MF' || value === 'FW';
+}
+
+// Only players the coach has explicitly marked as starters (roster page) are
+// eligible for auto-placement — everyone else stays on the bench by default,
+// and can still be dragged on manually as a substitution.
+function groupByPosition(players: Player[]): Record<PlayerPosition, Player[]> {
+  const groups: Record<PlayerPosition, Player[]> = { GK: [], DF: [], MF: [], FW: [] };
   for (const player of players) {
-    const key = player.position && POSITION_X_FRACTION[player.position] ? player.position : DEFAULT_GROUP;
-    groups[key] = groups[key] ? [...groups[key], player] : [player];
+    if (player.is_starter && isPlayerPosition(player.position)) {
+      groups[player.position].push(player);
+    }
   }
   return groups;
 }
 
-// Computes a default grid formation, spreading each position group vertically
-// at a fixed depth on the pitch. Pure function — no Konva/React dependency.
 export function computeDefaultPositions(
   players: Player[],
+  sportType: SportType,
   pitchWidth: number,
   pitchHeight: number,
 ): Record<string, PitchPosition> {
   const groups = groupByPosition(players);
+  const slotCounts = SPORT_FORMATIONS[sportType];
   const positions: Record<string, PitchPosition> = {};
   const verticalMargin = pitchHeight * 0.12;
   const usableHeight = pitchHeight - verticalMargin * 2;
 
-  for (const [groupKey, groupPlayers] of Object.entries(groups)) {
-    const x = pitchWidth * (POSITION_X_FRACTION[groupKey] ?? POSITION_X_FRACTION[DEFAULT_GROUP] ?? 0.55);
+  (Object.keys(groups) as PlayerPosition[]).forEach((groupKey) => {
+    const slotCount = slotCounts[groupKey];
+    const groupPlayers = groups[groupKey].slice(0, slotCount);
+    const x = pitchWidth * POSITION_X_FRACTION[groupKey];
     const step = usableHeight / (groupPlayers.length + 1);
 
     groupPlayers.forEach((player, index) => {
@@ -46,7 +60,7 @@ export function computeDefaultPositions(
         y: verticalMargin + step * (index + 1),
       };
     });
-  }
+  });
 
   return positions;
 }

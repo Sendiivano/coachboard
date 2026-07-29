@@ -102,7 +102,9 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
     };
   }
 
-  function handleStageMouseDown(event: Konva.KonvaEventObject<MouseEvent>) {
+  // Shared by mouse and touch — Konva normalizes getPointerPosition() for both,
+  // so the actual placement logic only needs to live in one place.
+  function handlePointerDown(event: Konva.KonvaEventObject<MouseEvent | TouchEvent>) {
     if (selectedTool === 'select') return;
     const stage = event.target.getStage();
     if (!stage) return;
@@ -127,10 +129,9 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
         addElement({ id: crypto.randomUUID(), type: 'text', x: point.x, y: point.y, text });
       }
     }
-    // Tool stays active — coach can place multiple in a row until they switch tools manually.
   }
 
-  function handleStageMouseUp(event: Konva.KonvaEventObject<MouseEvent>) {
+  function handlePointerUp(event: Konva.KonvaEventObject<MouseEvent | TouchEvent>) {
     if (selectedTool !== 'arrow' || !pendingArrowStart) return;
     const stage = event.target.getStage();
     if (!stage) return;
@@ -148,7 +149,6 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
     recordSnapshot();
     addElement(arrow);
     setPendingArrowStart(null);
-    // Arrow tool stays active — coach can draw several arrows in a row.
   }
 
   function handleDrop(event: React.DragEvent) {
@@ -191,8 +191,10 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
         draggable={!isDrawingToolActive}
         onWheel={handleWheel}
         onDragEnd={handleStageDragEnd}
-        onMouseDown={handleStageMouseDown}
-        onMouseUp={handleStageMouseUp}
+        onMouseDown={handlePointerDown}
+        onMouseUp={handlePointerUp}
+        onTouchStart={handlePointerDown}
+        onTouchEnd={handlePointerUp}
         className={`rounded-lg border border-gray-300 shadow-sm ${isDrawingToolActive ? 'cursor-crosshair' : ''}`}
       >
         <Layer>

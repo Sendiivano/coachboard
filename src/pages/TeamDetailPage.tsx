@@ -4,6 +4,8 @@ import { useTeam } from '@/features/team/hooks/useTeam';
 import { usePlayers } from '@/features/team/hooks/usePlayers';
 import { PlayerForm } from '@/features/team/components/PlayerForm';
 import { PlayerList } from '@/features/team/components/PlayerList';
+import { StarterSummary } from '@/features/team/components/StarterSummary';
+import type { SportType } from '@/features/team/types/team.types';
 
 export function TeamDetailPage() {
   const { teamId } = useParams<{ teamId: string }>();
@@ -35,6 +37,8 @@ export function TeamDetailPage() {
           {showForm ? 'Cancel' : '+ Add player'}
         </button>
       </div>
+      <span className="text-xs text-gray-400 -mt-4">Check "Starter" to auto-place on the tactical board</span>
+      {players && <StarterSummary players={players} sportType={team.sport_type as SportType} />}
 
       {showForm && teamId && (
         <PlayerForm teamId={teamId} onSuccess={() => setShowForm(false)} />

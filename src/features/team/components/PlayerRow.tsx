@@ -4,6 +4,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { useUpdatePlayer } from '../hooks/useUpdatePlayer';
 import { useDeletePlayer } from '../hooks/useDeletePlayer';
+import { useToggleStarter } from '../hooks/useToggleStarter';
 import type { Player, PlayerPosition } from '../types/team.types';
 
 interface PlayerRowProps {
@@ -27,6 +28,7 @@ export function PlayerRow({ player, teamId }: PlayerRowProps) {
 
   const { mutate: updatePlayer, isPending: isUpdating } = useUpdatePlayer(teamId);
   const { mutate: deletePlayer, isPending: isDeleting } = useDeletePlayer(teamId);
+  const { mutate: toggleStarter } = useToggleStarter(teamId);
 
   function handleSave() {
     updatePlayer(
@@ -87,6 +89,15 @@ export function PlayerRow({ player, teamId }: PlayerRowProps) {
       </span>
       <span className="font-medium text-gray-900">{player.full_name}</span>
       {player.position && <span className="ml-2 text-sm text-gray-500">{player.position}</span>}
+      <label className="ml-3 flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={player.is_starter}
+          onChange={(e) => toggleStarter({ playerId: player.id, isStarter: e.target.checked })}
+          className="h-4 w-4 rounded border-gray-300 text-pitch focus:ring-pitch"
+        />
+        Starter
+      </label>
       <div className="ml-auto flex gap-3">
         <button onClick={() => setIsEditing(true)} className="text-sm text-pitch-dark hover:underline">
           Edit
