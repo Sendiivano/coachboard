@@ -4,6 +4,7 @@ import type { TextElement } from '../types/drawing.types';
 import { useDrawingStore } from '../store/drawingStore';
 import { useHistoryStore } from '../store/historyStore';
 import { isWithinPitch } from '../constants';
+import { promptDialog } from '@/store/modalStore';
 
 interface TextLabelShapeProps {
   element: TextElement;
@@ -25,8 +26,8 @@ export function TextLabelShape({ element }: TextLabelShapeProps) {
     updateElement(element.id, { x, y });
   }
 
-  function handleDblClick() {
-    const nextText = prompt('Edit label text:', element.text);
+  async function handleDblClick() {
+    const nextText = await promptDialog('Edit label text:', element.text);
     if (nextText !== null) {
       recordSnapshot();
       updateElement(element.id, { text: nextText });

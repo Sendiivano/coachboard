@@ -5,6 +5,8 @@ import { useCurrentFormationStore } from '../store/currentFormationStore';
 import { useSaveFormation } from '../hooks/useSaveFormation';
 import { useUpdateFormation } from '../hooks/useUpdateFormation';
 import { Button } from '@/components/ui/Button';
+import { promptDialog } from '@/store/modalStore';
+import { toast } from '@/store/toastStore';
 import type { FormationData } from '../types/formation.types';
 
 interface FormationSaveControlsProps {
@@ -27,19 +29,31 @@ export function FormationSaveControls({ teamId }: FormationSaveControlsProps) {
     return { formationPositions, oppositionMarkers, drawingElements };
   }
 
-  function handleSaveAsNew() {
-    const name = prompt('Name this formation:', currentFormationName ?? 'New formation');
+  async function handleSaveAsNew() {
+    const name = await promptDialog('Name this formation:', currentFormationName ?? 'New formation');
     if (!name) return;
 
     saveFormation(
       { teamId, name, formationData: buildCurrentSnapshot() },
-      { onSuccess: (formation) => setCurrentFormation(formation.id, formation.name) },
+      {
+        onSuccess: (formation) => {
+          setCurrentFormation(formation.id, formation.name);
+          toast.success(`Saved "${formation.name}"`);
+        },
+        onError: () => toast.error('Failed to save formation'),
+      },
     );
   }
 
   function handleUpdateCurrent() {
     if (!currentFormationId) return;
-    updateFormation({ teamId, formationId: currentFormationId, formationData: buildCurrentSnapshot() });
+    updateFormation(
+      { teamId, formationId: currentFormationId, formationData: buildCurrentSnapshot() },
+      {
+        onSuccess: () => toast.success('Formation updated'),
+        onError: () => toast.error('Failed to update formation'),
+      },
+    );
   }
 
   return (

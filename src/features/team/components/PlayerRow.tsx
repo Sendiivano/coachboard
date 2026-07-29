@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/Button';
 import { useUpdatePlayer } from '../hooks/useUpdatePlayer';
 import { useDeletePlayer } from '../hooks/useDeletePlayer';
 import { useToggleStarter } from '../hooks/useToggleStarter';
+import { confirmDialog } from '@/store/modalStore';
+import { toast } from '@/store/toastStore';
 import type { Player, PlayerPosition } from '../types/team.types';
 
 interface PlayerRowProps {
@@ -44,9 +46,13 @@ export function PlayerRow({ player, teamId }: PlayerRowProps) {
     );
   }
 
-  function handleDelete() {
-    if (confirm(`Remove ${player.full_name} from the roster?`)) {
-      deletePlayer(player.id);
+  async function handleDelete() {
+    const confirmed = await confirmDialog(`Remove ${player.full_name} from the roster?`);
+    if (confirmed) {
+      deletePlayer(player.id, {
+        onSuccess: () => toast.success(`${player.full_name} removed from roster`),
+        onError: () => toast.error('Failed to remove player'),
+      });
     }
   }
 

@@ -8,6 +8,8 @@ import { StarterSummary } from '@/features/team/components/StarterSummary';
 import type { SportType } from '@/features/team/types/team.types';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export function TeamDetailPage() {
   const { teamId } = useParams<{ teamId: string }>();
@@ -15,9 +17,16 @@ export function TeamDetailPage() {
   const { data: players, isLoading: playersLoading, error } = usePlayers(teamId);
   const [showForm, setShowForm] = useState(false);
 
-  if (teamLoading) return <p className="text-gray-500">Loading team…</p>;
+  if (teamLoading) {
+    return (
+      <div className="max-w-2xl mx-auto flex flex-col gap-4">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-1/2" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    );
+  }
   if (!team) return <p className="text-red-600">Team not found.</p>;
-
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-6">
       <div>
@@ -48,9 +57,26 @@ export function TeamDetailPage() {
         </Card>
       )}
 
-      {playersLoading && <p className="text-gray-500">Loading players…</p>}
+      {playersLoading && (
+        <Card>
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-3/4" />
+          </div>
+        </Card>
+      )}
       {error && <p className="text-red-600">Failed to load players: {error.message}</p>}
-      {players && teamId && (
+      {players && players.length === 0 && (
+        <Card>
+          <EmptyState
+            title="No players yet"
+            description="Add your first player to start building this team's roster."
+            action={<Button onClick={() => setShowForm(true)}>+ Add player</Button>}
+          />
+        </Card>
+      )}
+      {players && players.length > 0 && teamId && (
         <Card padded={false}>
           <PlayerList players={players} teamId={teamId} />
         </Card>

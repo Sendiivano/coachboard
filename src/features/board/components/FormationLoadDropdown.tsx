@@ -1,4 +1,5 @@
 import { useFormations } from '../hooks/useFormations';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useFormationStore } from '../store/formationStore';
 import { useOppositionStore } from '../store/oppositionStore';
 import { useDrawingStore } from '../store/drawingStore';
@@ -32,9 +33,9 @@ export function FormationLoadDropdown({ teamId }: FormationLoadDropdownProps) {
     setCurrentFormation(formation.id, formation.name);
   }
 
-  if (isLoading) return <p className="text-sm text-gray-500">Loading formations…</p>;
+  if (isLoading) return <Skeleton className="h-9 w-40" />;
   if (!formations || formations.length === 0) {
-    return <p className="text-sm text-gray-500">No saved formations yet.</p>;
+    return <p className="text-sm text-gray-400">No saved formations yet.</p>;
   }
 
   return (

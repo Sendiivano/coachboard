@@ -14,6 +14,7 @@ import { useOppositionStore } from '../store/oppositionStore';
 import { useDrawingStore } from '../store/drawingStore';
 import { useHistoryStore } from '../store/historyStore';
 import { PITCH_WIDTH, PITCH_HEIGHT, isWithinPitch } from '../constants';
+import { promptDialog } from '@/store/modalStore';
 import type { Player } from '@/features/team/types/team.types';
 import type { ArrowElement } from '../types/drawing.types';
 
@@ -124,11 +125,12 @@ export function TacticalBoardCanvas({ players, onStageReady }: TacticalBoardCanv
       recordSnapshot();
       addElement({ id: crypto.randomUUID(), type: 'football', x: point.x, y: point.y });
     } else if (selectedTool === 'text') {
-      const text = prompt('Label text:', 'Note');
-      if (text) {
-        recordSnapshot();
-        addElement({ id: crypto.randomUUID(), type: 'text', x: point.x, y: point.y, text });
-      }
+      promptDialog('Label text:', 'Note').then((text) => {
+        if (text) {
+          recordSnapshot();
+          addElement({ id: crypto.randomUUID(), type: 'text', x: point.x, y: point.y, text });
+        }
+      });
     }
   }
 

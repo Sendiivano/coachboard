@@ -5,6 +5,8 @@ import { TeamList } from '@/features/team/components/TeamList';
 import { useAuthStore } from '@/store/authStore';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export function TeamsPage() {
   const user = useAuthStore((state) => state.user);
@@ -31,9 +33,26 @@ export function TeamsPage() {
         </Card>
       )}
 
-      {isLoading && <p className="text-gray-500">Loading teams…</p>}
+      {isLoading && (
+        <Card>
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="h-5 w-1/2" />
+            <Skeleton className="h-5 w-3/5" />
+          </div>
+        </Card>
+      )}
       {error && <p className="text-red-600">Failed to load teams: {error.message}</p>}
-      {teams && (
+      {teams && teams.length === 0 && (
+        <Card>
+          <EmptyState
+            title="No teams yet"
+            description="Create your first team to start building rosters and formations."
+            action={<Button onClick={() => setShowForm(true)}>+ New team</Button>}
+          />
+        </Card>
+      )}
+      {teams && teams.length > 0 && (
         <Card padded={false}>
           <TeamList teams={teams} />
         </Card>

@@ -18,6 +18,7 @@ import { useUndoRedoShortcuts } from '@/features/board/hooks/useUndoRedoShortcut
 import type { SportType } from '@/features/team/types/team.types';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 const AUTO_CENTER_DELAY_MS = 2000;
 
@@ -52,9 +53,16 @@ export function TacticalBoardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardScale, boardPosition.x, boardPosition.y]);
 
-  if (isTeamLoading || isPlayersLoading) return <p className="text-gray-500">Loading roster…</p>;
+  if (isTeamLoading || isPlayersLoading) {
+    return (
+      <div className="max-w-6xl mx-auto flex flex-col gap-4">
+        <Skeleton className="h-8 w-1/3" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
   if (!players || !team) return <p className="text-red-600">Could not load roster.</p>;
-
   return (
     <div className="max-w-6xl mx-auto flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
