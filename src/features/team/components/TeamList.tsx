@@ -22,10 +22,12 @@ export function TeamList({ teams }: TeamListProps) {
         <li key={team.id}>
           <Link
             to={`/teams/${team.id}`}
-            className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-between px-6 py-4 hover:bg-brand-50 transition-colors"
           >
             <span className="font-medium text-gray-900">{team.name}</span>
-            <span className="text-sm text-gray-500">{SPORT_LABELS[team.sport_type] ?? team.sport_type}</span>
+            <span className="text-sm text-gray-500">
+              {SPORT_LABELS[team.sport_type] ?? team.sport_type}
+            </span>
           </Link>
         </li>
       ))}

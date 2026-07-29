@@ -13,7 +13,15 @@ interface PromptRequest {
   resolve: (value: string | null) => void;
 }
 
-type ModalRequest = ConfirmRequest | PromptRequest;
+interface SelectRequest {
+  type: 'select';
+  message: string;
+  options: Array<{ value: string; label: string; group?: string }>;
+  defaultValue?: string;
+  resolve: (value: string | null) => void;
+}
+
+type ModalRequest = ConfirmRequest | PromptRequest | SelectRequest;
 
 interface ModalState {
   request: ModalRequest | null;
@@ -32,7 +40,15 @@ export function confirmDialog(message: string): Promise<boolean> {
     useModalStore.getState().setRequest({ type: 'confirm', message, resolve });
   });
 }
-
+export function selectDialog(
+  message: string,
+  options: Array<{ value: string; label: string }>,
+  defaultValue?: string,
+): Promise<string | null> {
+  return new Promise((resolve) => {
+    useModalStore.getState().setRequest({ type: 'select', message, options, defaultValue, resolve });
+  });
+}
 export function promptDialog(message: string, defaultValue = ''): Promise<string | null> {
   return new Promise((resolve) => {
     useModalStore.getState().setRequest({ type: 'prompt', message, defaultValue, resolve });

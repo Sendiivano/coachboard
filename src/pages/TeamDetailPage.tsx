@@ -16,10 +16,12 @@ export function TeamDetailPage() {
   const { data: team, isLoading: teamLoading } = useTeam(teamId);
   const { data: players, isLoading: playersLoading, error } = usePlayers(teamId);
   const [showForm, setShowForm] = useState(false);
+  const starterCount = players?.filter((player) => player.is_starter).length ?? 0;
+  const canOpenBoard = starterCount >= 11;
 
   if (teamLoading) {
     return (
-      <div className="max-w-2xl mx-auto flex flex-col gap-4">
+      <div className="max-w-5xl w-full mx-auto flex flex-col gap-4 px-0 sm:px-6 lg:px-8">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-32 w-full" />
@@ -28,32 +30,42 @@ export function TeamDetailPage() {
   }
   if (!team) return <p className="text-red-600">Team not found.</p>;
   return (
-    <div className="max-w-2xl mx-auto flex flex-col gap-6">
-      <div>
+    <div className="max-w-5xl w-full mx-auto flex flex-col gap-6 px-0 sm:px-6 lg:px-8">
+      <div className="space-y-4">
         <Link to="/teams" className="text-sm text-brand-600 hover:text-brand-700">
           ← Back to teams
         </Link>
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-semibold text-gray-900">{team.name}</h1>
-          <Link to={`/board/${team.id}`}>
-            <Button>Open Tactical Board →</Button>
-          </Link>
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium text-gray-900">Roster</h2>
-        <Button variant={showForm ? 'secondary' : 'primary'} onClick={() => setShowForm((prev) => !prev)}>
-          {showForm ? 'Cancel' : '+ Add player'}
-        </Button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-medium text-gray-900">Roster</h2>
+          <p className="text-xs text-gray-400 mt-1">Check "Starter" to auto-place on the tactical board</p>
+          {!canOpenBoard && (
+            <p className="text-xs text-red-600 mt-1">
+              Add {11 - starterCount} more starter{starterCount === 10 ? '' : 's'} before opening the tactical board.
+            </p>
+          )}
+        </div>
+        {canOpenBoard ? (
+          <Link to={`/board/${team.id}`}>
+            <Button>Open Tactical Board →</Button>
+          </Link>
+        ) : (
+          <Button variant="secondary" disabled>
+            Open Tactical Board →
+          </Button>
+        )}
       </div>
-      <p className="text-xs text-gray-400 -mt-4">Check "Starter" to auto-place on the tactical board</p>
 
       {players && <StarterSummary players={players} sportType={team.sport_type as SportType} />}
 
       {showForm && teamId && (
         <Card>
-          <PlayerForm teamId={teamId} onSuccess={() => setShowForm(false)} />
+          <PlayerForm teamId={teamId} players={players} onSuccess={() => setShowForm(false)} />
         </Card>
       )}
 

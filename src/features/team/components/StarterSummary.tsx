@@ -21,7 +21,7 @@ export function StarterSummary({ players, sportType }: StarterSummaryProps) {
               isOver
                 ? 'bg-amber-100 text-amber-800'
                 : isUnder
-                  ? 'bg-gray-100 text-gray-500'
+                  ? 'bg-red-100 text-red-700'
                   : 'bg-emerald-100 text-emerald-800'
             }`}
           >

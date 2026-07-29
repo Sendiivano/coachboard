@@ -15,15 +15,22 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2" role="status" aria-live="polite">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2" role="status" aria-live="polite" aria-atomic="true">
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`rounded-md px-4 py-3 text-sm font-medium shadow-card text-white ${
+          className={`toast-item rounded-md px-4 py-3 text-sm font-medium shadow-card text-white flex items-start justify-between gap-4 ${
             t.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
           }`}
         >
-          {t.message}
+          <div className="flex-1 pr-2">{t.message}</div>
+          <button
+            aria-label="Dismiss notification"
+            onClick={() => removeToast(t.id)}
+            className="ml-2 toast-dismiss"
+          >
+            ×
+          </button>
         </div>
       ))}
     </div>

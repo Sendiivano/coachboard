@@ -16,8 +16,8 @@ export function TeamsPage() {
   if (!user) return null;
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl w-full mx-auto flex flex-col gap-6 px-0 sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Your Teams</h1>
           <p className="text-sm text-gray-500 mt-1">Create and manage the teams you coach.</p>
@@ -56,7 +56,7 @@ export function TeamsPage() {
         <Card padded={false}>
           <TeamList teams={teams} />
         </Card>
-      )}
+      )}    
     </div>
   );
 }

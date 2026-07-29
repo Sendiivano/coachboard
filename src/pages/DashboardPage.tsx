@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/Card';
 
 export function DashboardPage() {
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <div className="max-w-4xl w-full mx-auto flex flex-col gap-6 px-0 sm:px-6 lg:px-8">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
         <p className="text-gray-500 mt-1">Welcome back. Here's where you can manage your teams and formations.</p>

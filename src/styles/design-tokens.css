@@ -1,0 +1,240 @@
+/* Design tokens exposed as CSS variables for runtime use and theming */
+:root {
+  /* Colors */
+  --color-text: #111827; /* gray-900 */
+  --color-bg: #ffffff;
+
+  /* UI border / muted */
+  --color-border: #e6e9ef; /* subtle neutral border */
+  --color-muted: #6b7280; /* gray-500 */
+
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-900: #312e81;
+
+  --color-pitch-default: #2e7d32;
+  --color-pitch-dark: #1b5e20;
+
+  --color-success: #16a34a; /* emerald-600 */
+  --color-error: #dc2626; /* red-600 */
+
+  /* Spacing scale */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-card: 0.75rem;
+
+  /* Elevation / shadows */
+  --shadow-card: 0 1px 2px 0 rgba(0,0,0,0.04), 0 1px 3px 0 rgba(0,0,0,0.06);
+
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.5;
+
+  /* Focus */
+  --focus-ring: 3px solid var(--color-brand-400);
+}
+
+/* Small utility layer that maps tokens to commonly used component styles. */
+.card {
+  border-radius: var(--radius-card);
+  background: #ffffff;
+  color: #111827;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+}
+
+.card:focus-within {
+  border-color: var(--color-brand-500);
+}
+
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  outline: none;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-0.5px);
+}
+
+.btn:focus-visible { box-shadow: var(--focus-ring); }
+.btn:active { transform: translateY(1px); }
+
+.input-field,
+.select-field {
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-border);
+  background: #f8fafc;
+  color: var(--color-text);
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.input-field:hover,
+.select-field:hover {
+  background: #ffffff;
+}
+
+.input-field:focus-visible,
+.select-field:focus-visible {
+  outline: none;
+  border-color: var(--color-brand-500);
+  box-shadow: var(--focus-ring);
+  background: #ffffff;
+}
+
+.input-field.error,
+.select-field.error {
+  border-color: var(--color-error);
+}
+
+.input-field.error:focus-visible,
+.select-field.error:focus-visible {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
+}
+
+.btn-primary { background: var(--color-brand-600); color: white; }
+.btn-primary:hover { background: var(--color-brand-700); }
+
+.btn-secondary { background: var(--color-bg); color: var(--color-muted); border: 1px solid var(--color-border); }
+.btn-secondary:hover { background: #f8fafc; }
+
+.btn-ghost { background: transparent; color: var(--color-muted); }
+.btn-ghost:hover { background: rgba(0,0,0,0.03); }
+
+.btn-danger { background: var(--color-error); color: white; }
+.btn-danger:hover { filter: brightness(0.95); }
+
+/* small helper to preserve existing shadow utility name */
+.shadow-card { box-shadow: var(--shadow-card); }
+
+/* Status pill styling for roster starter/sub tags */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-width: 96px;
+  white-space: nowrap;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  animation: pop-in 220ms ease;
+}
+
+.status-pill:hover {
+  transform: translateY(-1px);
+}
+
+.status-pill.starter {
+  background: rgba(16, 185, 129, 0.14);
+  color: rgb(21, 128, 61);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+
+.status-pill.starter-hover,
+.status-pill.starter:hover {
+  background: rgba(244, 63, 94, 0.16);
+  color: rgb(190, 18, 60);
+  border-color: rgba(244, 63, 94, 0.28);
+}
+
+.status-pill.subs {
+  background: rgba(255, 255, 255, 0.95);
+  color: #334155;
+  border: 1px solid rgba(148, 163, 184, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+}
+
+.status-pill.subs:hover {
+  background: rgba(34, 197, 94, 0.16);
+  color: rgb(21, 128, 61);
+  border-color: rgba(34, 197, 94, 0.28);
+}
+
+.status-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Toast dismiss styling to make the control visible on colored backgrounds */
+.toast-dismiss {
+  display: inline-flex;
+  height: 1.5rem;
+  width: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+.toast-dismiss:hover { background: rgba(255,255,255,0.18); }
+
+.toast-item {
+  animation: slide-in-up 200ms ease;
+  transition: opacity 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+
+.toast-item:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
