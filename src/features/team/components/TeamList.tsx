@@ -13,21 +13,19 @@ const SPORT_LABELS: Record<string, string> = {
 
 export function TeamList({ teams }: TeamListProps) {
   if (teams.length === 0) {
-    return <p className="text-gray-500">No teams yet. Create your first team above.</p>;
+    return <p className="text-gray-500 p-6">No teams yet. Create your first team above.</p>;
   }
 
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="divide-y divide-gray-100">
       {teams.map((team) => (
         <li key={team.id}>
           <Link
             to={`/teams/${team.id}`}
-            className="block rounded-md border border-gray-200 px-4 py-3 hover:border-pitch hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
           >
             <span className="font-medium text-gray-900">{team.name}</span>
-            <span className="ml-2 text-sm text-gray-500">
-              {SPORT_LABELS[team.sport_type] ?? team.sport_type}
-            </span>
+            <span className="text-sm text-gray-500">{SPORT_LABELS[team.sport_type] ?? team.sport_type}</span>
           </Link>
         </li>
       ))}

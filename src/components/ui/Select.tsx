@@ -25,7 +25,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${selectId}-error` : undefined}
-          className={`rounded-md border px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-pitch ${
+          className={`rounded-md border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 ${
             error ? 'border-red-500' : 'border-gray-300'
           } ${className ?? ''}`}
           {...rest}

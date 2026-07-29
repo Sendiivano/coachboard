@@ -25,8 +25,6 @@ export function DrawingToolbar() {
   }
 
   function handleToolClick(tool: DrawingTool) {
-    
-    // Clicking the already-active tool turns it off (back to select/pan mode).
     setSelectedTool(selectedTool === tool ? 'select' : tool);
   }
 
@@ -41,8 +39,8 @@ export function DrawingToolbar() {
             aria-pressed={isActive}
             className={`rounded-md px-3 py-1.5 text-sm font-medium border transition-colors ${
               isActive
-                ? 'bg-pitch text-white border-pitch'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-pitch'
+                ? 'bg-brand-600 text-white border-brand-600'
+                : 'bg-white text-gray-600 border-gray-300 hover:border-brand-400'
             }`}
           >
             {tool.label}
@@ -53,26 +51,26 @@ export function DrawingToolbar() {
       {selectedTool !== 'select' && (
         <button
           onClick={() => setSelectedTool('select')}
-          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-600 hover:border-gray-400"
         >
           Done drawing
         </button>
       )}
-      <button onClick={handleClearAll} className="ml-2 text-sm text-red-600 hover:underline">
+      <button onClick={handleClearAll} className="text-sm text-red-600 hover:text-red-700">
         Clear drawings
       </button>
-      <div className="ml-auto flex gap-2">
+      <div className="flex gap-2 ml-1">
         <button
           onClick={undo}
           disabled={!canUndo}
-          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-600 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ↩ Undo
         </button>
         <button
           onClick={redo}
           disabled={!canRedo}
-          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-600 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ↪ Redo
         </button>

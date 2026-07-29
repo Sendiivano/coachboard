@@ -10,7 +10,7 @@ export function StarterSummary({ players, sportType }: StarterSummaryProps) {
   const counts = computeStarterCounts(players, sportType);
 
   return (
-    <div className="flex flex-wrap gap-3 text-sm">
+    <div className="flex flex-wrap gap-2 text-sm">
       {counts.map(({ position, selected, required }) => {
         const isOver = selected > required;
         const isUnder = selected < required;
@@ -21,8 +21,8 @@ export function StarterSummary({ players, sportType }: StarterSummaryProps) {
               isOver
                 ? 'bg-amber-100 text-amber-800'
                 : isUnder
-                  ? 'bg-gray-100 text-gray-600'
-                  : 'bg-green-100 text-green-800'
+                  ? 'bg-gray-100 text-gray-500'
+                  : 'bg-emerald-100 text-emerald-800'
             }`}
           >
             {position}: {selected}/{required}

@@ -52,7 +52,7 @@ export function PlayerRow({ player, teamId }: PlayerRowProps) {
 
   if (isEditing) {
     return (
-      <li className="flex flex-col gap-3 rounded-md border border-pitch px-4 py-3">
+      <li className="flex flex-col gap-3 px-6 py-4 bg-brand-50/40">
         <Input label="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
         <div className="flex gap-3">
           <Input
@@ -83,29 +83,29 @@ export function PlayerRow({ player, teamId }: PlayerRowProps) {
   }
 
   return (
-    <li className="flex items-center gap-3 rounded-md border border-gray-200 px-4 py-3">
-      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-pitch text-white text-sm font-bold">
+    <li className="flex items-center gap-3 px-6 py-3">
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white text-sm font-semibold shrink-0">
         {player.jersey_number ?? '–'}
       </span>
-      <span className="font-medium text-gray-900">{player.full_name}</span>
-      {player.position && <span className="ml-2 text-sm text-gray-500">{player.position}</span>}
-      <label className="ml-3 flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer">
+      <span className="font-medium text-gray-900 truncate">{player.full_name}</span>
+      {player.position && <span className="text-sm text-gray-400">{player.position}</span>}
+      <label className="ml-3 flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer shrink-0">
         <input
           type="checkbox"
           checked={player.is_starter}
           onChange={(e) => toggleStarter({ playerId: player.id, isStarter: e.target.checked })}
-          className="h-4 w-4 rounded border-gray-300 text-pitch focus:ring-pitch"
+          className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
         />
         Starter
       </label>
-      <div className="ml-auto flex gap-3">
-        <button onClick={() => setIsEditing(true)} className="text-sm text-pitch-dark hover:underline">
+      <div className="ml-auto flex gap-3 shrink-0">
+        <button onClick={() => setIsEditing(true)} className="text-sm text-brand-600 hover:text-brand-700">
           Edit
         </button>
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="text-sm text-red-600 hover:underline disabled:opacity-50"
+          className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
         >
           {isDeleting ? 'Removing…' : 'Remove'}
         </button>

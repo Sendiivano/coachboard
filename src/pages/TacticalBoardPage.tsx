@@ -8,24 +8,30 @@ import { useFormationStore } from '@/features/board/store/formationStore';
 import { useOppositionStore } from '@/features/board/store/oppositionStore';
 import { TacticalBoardCanvas } from '@/features/board/components/TacticalBoardCanvas';
 import { RosterSidebar } from '@/features/board/components/RosterSidebar';
-import { computeDefaultPositions } from '@/features/board/utils/formationLayout';
-import type { SportType } from '@/features/team/types/team.types';
-import { PITCH_WIDTH, PITCH_HEIGHT } from '@/features/board/constants';
-import { Button } from '@/components/ui/Button';
 import { DrawingToolbar } from '@/features/board/components/DrawingToolbar';
 import { FormationSaveControls } from '@/features/board/components/FormationSaveControls';
 import { FormationLoadDropdown } from '@/features/board/components/FormationLoadDropdown';
-import { ExportControls } from '@/features/board/components/ExportControls';    
+import { ExportControls } from '@/features/board/components/ExportControls';
+import { computeDefaultPositions } from '@/features/board/utils/formationLayout';
+import { PITCH_WIDTH, PITCH_HEIGHT } from '@/features/board/constants';
 import { useUndoRedoShortcuts } from '@/features/board/hooks/useUndoRedoShortcuts';
+import type { SportType } from '@/features/team/types/team.types';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+
+const AUTO_CENTER_DELAY_MS = 2000;
 
 export function TacticalBoardPage() {
   useUndoRedoShortcuts();
   const { teamId } = useParams<{ teamId: string }>();
-  const AUTO_CENTER_DELAY_MS = 2000;
   const stageRef = useRef<Konva.Stage | null>(null);
+
   const { data: team, isLoading: isTeamLoading } = useTeam(teamId);
   const { data: players, isLoading: isPlayersLoading } = usePlayers(teamId);
+
   const resetView = useBoardStore((state) => state.resetView);
+  const boardScale = useBoardStore((state) => state.scale);
+  const boardPosition = useBoardStore((state) => state.position);
   const setInitialPositions = useFormationStore((state) => state.setInitialPositions);
 
   const isOppositionVisible = useOppositionStore((state) => state.isVisible);
@@ -40,13 +46,6 @@ export function TacticalBoardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [players, team]);
 
-  // Auto-center the view shortly after load — gives the coach a moment to see
-  // the initial state before the view settles, but never overrides manual pan/zoom after that.
-  // Auto-center after a pause in panning/zooming — resets the idle timer on
-  // every view change, so it only fires once the coach stops interacting.
-  const boardScale = useBoardStore((state) => state.scale);
-  const boardPosition = useBoardStore((state) => state.position);
-
   useEffect(() => {
     const timer = setTimeout(() => resetView(), AUTO_CENTER_DELAY_MS);
     return () => clearTimeout(timer);
@@ -57,40 +56,54 @@ export function TacticalBoardPage() {
   if (!players || !team) return <p className="text-red-600">Could not load roster.</p>;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <h1 className="text-xl font-semibold">Tactical Board</h1>
-        <div className="flex items-center gap-2 flex-wrap">
-          {teamId && <FormationLoadDropdown teamId={teamId} />}
-          {teamId && <FormationSaveControls teamId={teamId} />}
+    <div className="max-w-6xl mx-auto flex flex-col gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Tactical Board</h1>
+          <p className="text-sm text-gray-500">{team.name}</p>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {team && <ExportControls stageRef={stageRef} teamName={team.name} />}
-          <Button variant="secondary" onClick={toggleOpposition}>
-            {isOppositionVisible ? 'Hide opposition' : 'Show opposition'}
-          </Button>
-          {isOppositionVisible && (
-            <Button variant="secondary" onClick={addOppositionMarker}>
-              + Add opposition marker
-            </Button>
-          )}
-          <Button variant="secondary" onClick={resetView}>
-            Reset view
-          </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <FormationLoadDropdown teamId={team.id} />
+          <FormationSaveControls teamId={team.id} />
         </div>
       </div>
-      <p className="text-sm text-gray-500">
+
+      <Card padded={false} className="p-4">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <DrawingToolbar />
+          <div className="flex gap-2 flex-wrap">
+            <ExportControls stageRef={stageRef} teamName={team.name} />
+            <Button variant="secondary" onClick={toggleOpposition}>
+              {isOppositionVisible ? 'Hide opposition' : 'Show opposition'}
+            </Button>
+            {isOppositionVisible && (
+              <Button variant="secondary" onClick={addOppositionMarker}>
+                + Add opposition marker
+              </Button>
+            )}
+            <Button variant="secondary" onClick={resetView}>
+              Reset view
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      <p className="text-sm text-gray-400">
         Scroll to zoom, drag to pan, drag players onto the pitch. Dragging a player off the pitch sends them
         back to the bench.
       </p>
-      <DrawingToolbar />
+
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 min-w-0">
           <TacticalBoardCanvas players={players} onStageReady={(stage) => (stageRef.current = stage)} />
         </div>
         <aside className="w-full lg:w-64 lg:shrink-0">
-          <h2 className="text-sm font-semibold text-gray-700 mb-2">Roster</h2>
-          <RosterSidebar players={players} />
+          <Card padded={false}>
+            <h2 className="text-sm font-semibold text-gray-700 px-4 py-3 border-b border-gray-100">Roster</h2>
+            <div className="p-4">
+              <RosterSidebar players={players} />
+            </div>
+          </Card>
         </aside>
       </div>
     </div>
