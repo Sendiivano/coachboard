@@ -1,5 +1,6 @@
 import type { Player } from '@/features/team/types/team.types';
 import { useFormationStore } from '../store/formationStore';
+import { useHistoryStore } from '../store/historyStore';
 
 interface RosterSidebarProps {
   players: Player[];
@@ -10,6 +11,7 @@ interface RosterSidebarProps {
 export function RosterSidebar({ players }: RosterSidebarProps) {
   const positions = useFormationStore((state) => state.positions);
   const setPosition = useFormationStore((state) => state.setPosition);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
 
   const unplacedPlayers = players.filter((player) => !positions[player.id]);
 
@@ -18,6 +20,7 @@ export function RosterSidebar({ players }: RosterSidebarProps) {
   }
 
   function handleAddToPitch(playerId: string) {
+    recordSnapshot();
     // Default drop point near the center; coach can drag to refine.
     setPosition(playerId, { x: 450, y: 300 });
   }

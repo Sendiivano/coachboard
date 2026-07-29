@@ -1,7 +1,8 @@
 import { Group, Circle, Text } from 'react-konva';
 import type Konva from 'konva';
 import { useOppositionStore, type OppositionMarker } from '../store/oppositionStore';
-import { isWithinPitch, TOKEN_RADIUS, OPPOSITION_TOKEN_COLOR } from '../constants';
+import { useHistoryStore } from '../store/historyStore';
+import { isWithinPitch, OPPOSITION_TOKEN_COLOR, TOKEN_RADIUS } from '../constants';
 
 interface OppositionTokenProps {
   marker: OppositionMarker;
@@ -12,10 +13,12 @@ interface OppositionTokenProps {
 export function OppositionToken({ marker }: OppositionTokenProps) {
   const setMarkerPosition = useOppositionStore((state) => state.setMarkerPosition);
   const removeMarker = useOppositionStore((state) => state.removeMarker);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
 
   function handleDragEnd(event: Konva.KonvaEventObject<DragEvent>) {
     const nextX = event.target.x();
     const nextY = event.target.y();
+    recordSnapshot();
 
     if (!isWithinPitch(nextX, nextY)) {
       removeMarker(marker.id);

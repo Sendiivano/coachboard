@@ -2,6 +2,7 @@ import { Group, Circle, Text } from 'react-konva';
 import type Konva from 'konva';
 import type { Player } from '@/features/team/types/team.types';
 import { useFormationStore } from '../store/formationStore';
+import { useHistoryStore } from '../store/historyStore';
 import { isWithinPitch, TOKEN_RADIUS, PLAYER_TOKEN_COLOR } from '../constants';
 
 interface PlayerTokenProps {
@@ -16,10 +17,12 @@ interface PlayerTokenProps {
 export function PlayerToken({ player, x, y }: PlayerTokenProps) {
   const setPosition = useFormationStore((state) => state.setPosition);
   const removePosition = useFormationStore((state) => state.removePosition);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
 
   function handleDragEnd(event: Konva.KonvaEventObject<DragEvent>) {
     const nextX = event.target.x();
     const nextY = event.target.y();
+    recordSnapshot();
 
     if (!isWithinPitch(nextX, nextY)) {
       removePosition(player.id);

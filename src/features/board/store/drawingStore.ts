@@ -9,11 +9,9 @@ interface DrawingState {
   updateElement: (id: string, updates: Partial<DrawingElement>) => void;
   removeElement: (id: string) => void;
   clearAll: () => void;
+  replaceAll: (elements: DrawingElement[]) => void;
 }
 
-// Single store for all drawing annotations (arrows, cones, footballs, text).
-// One flat array keyed by id — avoids duplicating render/select/delete logic
-// across four separate per-shape stores.
 export const useDrawingStore = create<DrawingState>((set) => ({
   selectedTool: 'select',
   elements: [],
@@ -25,4 +23,5 @@ export const useDrawingStore = create<DrawingState>((set) => ({
     })),
   removeElement: (id) => set((state) => ({ elements: state.elements.filter((el) => el.id !== id) })),
   clearAll: () => set({ elements: [] }),
+  replaceAll: (elements) => set({ elements }),
 }));

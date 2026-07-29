@@ -2,22 +2,24 @@ import { Arrow, Circle, Group } from 'react-konva';
 import type Konva from 'konva';
 import type { ArrowElement } from '../types/drawing.types';
 import { useDrawingStore } from '../store/drawingStore';
+import { useHistoryStore } from '../store/historyStore';
 
 interface ArrowShapeProps {
   element: ArrowElement;
 }
 
-// Arrows have two independently draggable endpoints rather than a single
-// drag handle — coaches need to reshape the arrow, not just relocate it.
 export function ArrowShape({ element }: ArrowShapeProps) {
   const updateElement = useDrawingStore((state) => state.updateElement);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
   const [x1, y1, x2, y2] = element.points;
 
   function handleStartDrag(event: Konva.KonvaEventObject<DragEvent>) {
+    recordSnapshot();
     updateElement(element.id, { points: [event.target.x(), event.target.y(), x2, y2] });
   }
 
   function handleEndDrag(event: Konva.KonvaEventObject<DragEvent>) {
+    recordSnapshot();
     updateElement(element.id, { points: [x1, y1, event.target.x(), event.target.y()] });
   }
 

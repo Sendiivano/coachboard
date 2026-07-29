@@ -1,4 +1,5 @@
 import { useDrawingStore } from '../store/drawingStore';
+import { useHistoryStore } from '../store/historyStore';
 import type { DrawingTool } from '../types/drawing.types';
 
 const TOOLS: Array<{ value: DrawingTool; label: string }> = [
@@ -12,8 +13,19 @@ export function DrawingToolbar() {
   const selectedTool = useDrawingStore((state) => state.selectedTool);
   const setSelectedTool = useDrawingStore((state) => state.setSelectedTool);
   const clearAll = useDrawingStore((state) => state.clearAll);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
+  const undo = useHistoryStore((state) => state.undo);
+  const redo = useHistoryStore((state) => state.redo);
+  const canUndo = useHistoryStore((state) => state.canUndo);
+  const canRedo = useHistoryStore((state) => state.canRedo);
+
+  function handleClearAll() {
+    recordSnapshot();
+    clearAll();
+  }
 
   function handleToolClick(tool: DrawingTool) {
+    
     // Clicking the already-active tool turns it off (back to select/pan mode).
     setSelectedTool(selectedTool === tool ? 'select' : tool);
   }
@@ -46,9 +58,25 @@ export function DrawingToolbar() {
           Done drawing
         </button>
       )}
-      <button onClick={clearAll} className="ml-2 text-sm text-red-600 hover:underline">
+      <button onClick={handleClearAll} className="ml-2 text-sm text-red-600 hover:underline">
         Clear drawings
       </button>
+      <div className="ml-auto flex gap-2">
+        <button
+          onClick={undo}
+          disabled={!canUndo}
+          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          ↩ Undo
+        </button>
+        <button
+          onClick={redo}
+          disabled={!canRedo}
+          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          ↪ Redo
+        </button>
+      </div>
     </div>
   );
 }

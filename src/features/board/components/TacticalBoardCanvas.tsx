@@ -12,6 +12,7 @@ import { useBoardStore } from '../store/boardStore';
 import { useFormationStore } from '../store/formationStore';
 import { useOppositionStore } from '../store/oppositionStore';
 import { useDrawingStore } from '../store/drawingStore';
+import { useHistoryStore } from '../store/historyStore';
 import { PITCH_WIDTH, PITCH_HEIGHT, isWithinPitch } from '../constants';
 import type { Player } from '@/features/team/types/team.types';
 import type { ArrowElement } from '../types/drawing.types';
@@ -44,6 +45,7 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
   const selectedTool = useDrawingStore((state) => state.selectedTool);
   const drawingElements = useDrawingStore((state) => state.elements);
   const addElement = useDrawingStore((state) => state.addElement);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
 
   useEffect(() => {
     function updateSize() {
@@ -113,12 +115,15 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
     }
 
     if (selectedTool === 'cone') {
+      recordSnapshot();
       addElement({ id: crypto.randomUUID(), type: 'cone', x: point.x, y: point.y });
     } else if (selectedTool === 'football') {
+      recordSnapshot();
       addElement({ id: crypto.randomUUID(), type: 'football', x: point.x, y: point.y });
     } else if (selectedTool === 'text') {
       const text = prompt('Label text:', 'Note');
       if (text) {
+        recordSnapshot();
         addElement({ id: crypto.randomUUID(), type: 'text', x: point.x, y: point.y, text });
       }
     }
@@ -140,6 +145,7 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
       type: 'arrow',
       points: [pendingArrowStart.x, pendingArrowStart.y, point.x, point.y],
     };
+    recordSnapshot();
     addElement(arrow);
     setPendingArrowStart(null);
     // Arrow tool stays active — coach can draw several arrows in a row.
@@ -149,6 +155,7 @@ export function TacticalBoardCanvas({ players }: TacticalBoardCanvasProps) {
     event.preventDefault();
     const playerId = event.dataTransfer.getData('text/plain');
     if (!playerId || !containerRef.current) return;
+    recordSnapshot();
 
     const rect = containerRef.current.getBoundingClientRect();
     const dropX = event.clientX - rect.left;

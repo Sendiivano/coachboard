@@ -2,6 +2,7 @@ import { Text } from 'react-konva';
 import type Konva from 'konva';
 import type { TextElement } from '../types/drawing.types';
 import { useDrawingStore } from '../store/drawingStore';
+import { useHistoryStore } from '../store/historyStore';
 import { isWithinPitch } from '../constants';
 
 interface TextLabelShapeProps {
@@ -11,10 +12,12 @@ interface TextLabelShapeProps {
 export function TextLabelShape({ element }: TextLabelShapeProps) {
   const updateElement = useDrawingStore((state) => state.updateElement);
   const removeElement = useDrawingStore((state) => state.removeElement);
+  const recordSnapshot = useHistoryStore((state) => state.recordSnapshot);
 
   function handleDragEnd(event: Konva.KonvaEventObject<DragEvent>) {
     const x = event.target.x();
     const y = event.target.y();
+    recordSnapshot();
     if (!isWithinPitch(x, y)) {
       removeElement(element.id);
       return;
@@ -25,6 +28,7 @@ export function TextLabelShape({ element }: TextLabelShapeProps) {
   function handleDblClick() {
     const nextText = prompt('Edit label text:', element.text);
     if (nextText !== null) {
+      recordSnapshot();
       updateElement(element.id, { text: nextText });
     }
   }

@@ -14,11 +14,9 @@ interface OppositionState {
   addMarker: () => void;
   setMarkerPosition: (id: string, x: number, y: number) => void;
   removeMarker: (id: string) => void;
+  replaceAll: (markers: OppositionMarker[]) => void;
 }
 
-// Opposition markers are generic tactical scratch notes — never tied to a
-// player_id, never fetched from Supabase's players table. Deliberately kept
-// in a separate store from formationStore so the two concepts never mix.
 export const useOppositionStore = create<OppositionState>((set) => ({
   isVisible: false,
   markers: [],
@@ -36,4 +34,5 @@ export const useOppositionStore = create<OppositionState>((set) => ({
     })),
   removeMarker: (id) =>
     set((state) => ({ markers: state.markers.filter((marker) => marker.id !== id) })),
+  replaceAll: (markers) => set({ markers }),
 }));

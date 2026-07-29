@@ -10,8 +10,10 @@ import { computeDefaultPositions } from '@/features/board/utils/formationLayout'
 import { PITCH_WIDTH, PITCH_HEIGHT } from '@/features/board/constants';
 import { Button } from '@/components/ui/Button';
 import { DrawingToolbar } from '@/features/board/components/DrawingToolbar';
+import { useUndoRedoShortcuts } from '@/features/board/hooks/useUndoRedoShortcuts';
 
 export function TacticalBoardPage() {
+    useUndoRedoShortcuts(); // Mounts global undo/redo keyboard shortcuts
   const { teamId } = useParams<{ teamId: string }>();
   const { data: players, isLoading } = usePlayers(teamId);
   const resetView = useBoardStore((state) => state.resetView);
