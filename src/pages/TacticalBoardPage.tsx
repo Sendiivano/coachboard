@@ -10,6 +10,8 @@ import { computeDefaultPositions } from '@/features/board/utils/formationLayout'
 import { PITCH_WIDTH, PITCH_HEIGHT } from '@/features/board/constants';
 import { Button } from '@/components/ui/Button';
 import { DrawingToolbar } from '@/features/board/components/DrawingToolbar';
+import { FormationSaveControls } from '@/features/board/components/FormationSaveControls';
+import { FormationLoadDropdown } from '@/features/board/components/FormationLoadDropdown';
 import { useUndoRedoShortcuts } from '@/features/board/hooks/useUndoRedoShortcuts';
 
 export function TacticalBoardPage() {
@@ -36,8 +38,12 @@ export function TacticalBoardPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h1 className="text-xl font-semibold">Tactical Board</h1>
+        <div className="flex items-center gap-2 flex-wrap">
+          {teamId && <FormationLoadDropdown teamId={teamId} />}
+          {teamId && <FormationSaveControls teamId={teamId} />}
+        </div>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={toggleOpposition}>
             {isOppositionVisible ? 'Hide opposition' : 'Show opposition'}
