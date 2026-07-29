@@ -11,7 +11,7 @@ import { TacticalBoardPage } from '@/pages/TacticalBoardPage';
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   { path: '/signup', element: <SignupPage /> },
-  { path: '/board', element: <TacticalBoardPage /> },
+  { path: '/board/:teamId', element: <TacticalBoardPage /> },
   {
     element: <ProtectedRoute />,
     children: [

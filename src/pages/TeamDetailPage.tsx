@@ -21,6 +21,9 @@ export function TeamDetailPage() {
           ← Back to teams
         </Link>
         <h1 className="text-xl font-semibold mt-2">{team.name}</h1>
+        <Link to={`/board/${team.id}`} className="text-sm text-pitch-dark hover:underline">
+          Open Tactical Board →
+        </Link>
       </div>
 
       <div className="flex items-center justify-between">
