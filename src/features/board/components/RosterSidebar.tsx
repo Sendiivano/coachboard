@@ -1,5 +1,6 @@
 import type { Player } from '@/features/team/types/team.types';
 import { useFormationStore } from '../store/formationStore';
+import { PLAYER_TOKEN_COLOR } from '../constants';
 import { useHistoryStore } from '../store/historyStore';
 
 interface RosterSidebarProps {
@@ -38,15 +39,21 @@ export function RosterSidebar({ players }: RosterSidebarProps) {
           onDragStart={(e) => handleDragStart(e, player.id)}
           className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 cursor-grab active:cursor-grabbing"
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pitch text-white text-xs font-bold">
+          <span
+            className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white ring-2 ring-white"
+            style={{ backgroundColor: PLAYER_TOKEN_COLOR }}
+          >
             {player.jersey_number ?? '–'}
           </span>
           <span className="text-sm text-gray-900">{player.full_name}</span>
           <button
             onClick={() => handleAddToPitch(player.id)}
-            className="ml-auto text-xs font-medium text-pitch-dark hover:underline"
+            className="ml-auto p-1 rounded hover:bg-gray-100"
+            aria-label="Add to pitch"
           >
-            Add
+            <svg className="h-4 w-4 text-pitch-dark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
         </li>
       ))}
