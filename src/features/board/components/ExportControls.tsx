@@ -1,4 +1,5 @@
 import type { RefObject } from 'react';
+import { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import type Konva from 'konva';
 import { Button } from '@/components/ui/Button';
@@ -39,14 +40,31 @@ export function ExportControls({ stageRef, teamName }: ExportControlsProps) {
     pdf.save(`${teamName}-formation.pdf`);
   }
 
+  const [value, setValue] = useState('');
+
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const v = e.target.value;
+    setValue(v);
+    if (v === 'png') handleExportPng();
+    if (v === 'pdf') handleExportPdf();
+    // reset to placeholder shortly after selection
+    setTimeout(() => setValue(''), 120);
+  }
+
   return (
     <div className="flex gap-2">
-      <Button variant="secondary" onClick={handleExportPng}>
-        Export PNG
-      </Button>
-      <Button variant="secondary" onClick={handleExportPdf}>
-        Export PDF
-      </Button>
+      <select
+        value={value}
+        onChange={handleChange}
+        aria-label="Export formation"
+        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50 focus:outline-none cursor-pointer"
+      >
+        <option value="" disabled>
+          Export
+        </option>
+        <option value="png">Export PNG</option>
+        <option value="pdf">Export PDF</option>
+      </select>
     </div>
   );
 }

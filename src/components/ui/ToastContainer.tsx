@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useToastStore } from '@/store/toastStore';
 
-const AUTO_DISMISS_MS = 3500;
+const AUTO_DISMISS_MS = 10000;
 
 export function ToastContainer() {
   const toasts = useToastStore((state) => state.toasts);

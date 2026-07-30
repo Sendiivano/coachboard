@@ -21,7 +21,7 @@ export function TeamDetailPage() {
 
   if (teamLoading) {
     return (
-      <div className="max-w-5xl w-full mx-auto flex flex-col gap-4 px-0 sm:px-6 lg:px-8">
+      <div className="max-w-5xl w-full mx-auto flex flex-col gap-4 px-4 md:px-6 lg:px-8">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-8 w-1/2" />
         <Skeleton className="h-32 w-full" />
@@ -30,7 +30,7 @@ export function TeamDetailPage() {
   }
   if (!team) return <p className="text-red-600">Team not found.</p>;
   return (
-    <div className="max-w-5xl w-full mx-auto flex flex-col gap-6 px-0 sm:px-6 lg:px-8">
+    <div className="max-w-5xl w-full mx-auto flex flex-col gap-6 px-4 md:px-6 lg:px-8">
       <div className="space-y-4">
         <Link to="/teams" className="text-sm text-brand-600 hover:text-brand-700">
           ← Back to teams
@@ -50,21 +50,26 @@ export function TeamDetailPage() {
             </p>
           )}
         </div>
-        {canOpenBoard ? (
-          <Link to={`/board/${team.id}`}>
-            <Button>Open Tactical Board →</Button>
-          </Link>
-        ) : (
-          <Button variant="secondary" disabled>
-            Open Tactical Board →
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant={showForm ? 'secondary' : 'primary'} onClick={() => setShowForm((prev) => !prev)}>
+            {showForm ? 'Cancel' : '+ Add player'}
           </Button>
-        )}
+          {canOpenBoard ? (
+            <Link to={`/board/${team.id}`}>
+              <Button>Open Tactical Board →</Button>
+            </Link>
+          ) : (
+            <Button variant="secondary" disabled>
+              Open Tactical Board →
+            </Button>
+          )}
+        </div>
       </div>
 
       {players && <StarterSummary players={players} sportType={team.sport_type as SportType} />}
 
       {showForm && teamId && (
-        <Card>
+        <Card className="flex items-center justify-center">
           <PlayerForm teamId={teamId} players={players} onSuccess={() => setShowForm(false)} />
         </Card>
       )}

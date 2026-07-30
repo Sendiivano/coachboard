@@ -103,43 +103,51 @@ export function PlayerRow({ player, teamId, players }: PlayerRowProps) {
 
   if (isEditing) {
     return (
-      <li className="flex flex-col gap-3 px-6 py-4 bg-brand-50/40">
-        <Input label="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-        <div className="flex gap-3">
-          <Input
-            label="Jersey #"
-            type="number"
-            value={jerseyNumber}
-            onChange={(e) => setJerseyNumber(e.target.value)}
-            min={0}
-            max={99}
-          />
-          <Select
-            label="Position"
-            value={position}
-            onChange={(e) => setPosition(e.target.value as PlayerPosition | '')}
-            options={POSITION_OPTIONS}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={handleSave} isLoading={isUpdating}>
-            Save
-          </Button>
-          <Button variant="secondary" onClick={() => setIsEditing(false)}>
-            Cancel
-          </Button>
+      <li className="flex justify-center px-6 py-4 bg-brand-50/40">
+        <div className="w-full max-w-md">
+          <div className="flex flex-col gap-3">
+            <Input label="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <Input
+                  label="Jersey #"
+                  type="number"
+                  value={jerseyNumber}
+                  onChange={(e) => setJerseyNumber(e.target.value)}
+                  min={0}
+                  max={99}
+                />
+              </div>
+              <div className="flex-1">
+                <Select
+                  label="Position"
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value as PlayerPosition | '')}
+                  options={POSITION_OPTIONS}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button onClick={handleSave} isLoading={isUpdating}>
+                Save
+              </Button>
+              <Button variant="secondary" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
         </div>
       </li>
     );
   }
 
   return (
-    <li className="grid grid-cols-[40px_minmax(0,1fr)_96px_96px_64px] items-center gap-4 px-6 py-3">
+    <li className="grid grid-cols-1 gap-3 md:grid-cols-[40px_minmax(0,1fr)_96px_96px_64px] md:items-center px-6 py-3 hover:bg-slate-50 transition-colors">
       <span className="text-left text-sm font-medium text-gray-700">
         {player.jersey_number ?? '–'}
       </span>
       <span className="min-w-0 text-sm font-medium text-gray-900 truncate">{player.full_name}</span>
-      <span className="text-center text-sm text-gray-500">{player.position ?? '–'}</span>
+      <span className="lg:text-center text-sm text-gray-500">{player.position ?? '–'}</span>
       <span className="flex justify-center">
         <button
           type="button"

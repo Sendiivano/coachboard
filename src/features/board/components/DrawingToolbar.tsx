@@ -48,14 +48,7 @@ export function DrawingToolbar() {
           </button>
         );
       })}
-      {selectedTool !== 'select' && (
-        <button
-          onClick={() => setSelectedTool('select')}
-          className="rounded-md px-3 py-1.5 text-sm font-medium border border-gray-300 bg-white text-gray-600 hover:border-gray-400"
-        >
-          Done drawing
-        </button>
-      )}
+      {/* Removed "Done drawing" button per design — selecting another tool or the canvas will exit drawing mode */}
       <button onClick={handleClearAll} className="text-sm text-red-600 hover:text-red-700">
         Clear drawings
       </button>

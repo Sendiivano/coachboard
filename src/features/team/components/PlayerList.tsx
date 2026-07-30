@@ -42,6 +42,23 @@ export function PlayerList({ players, teamId }: PlayerListProps) {
   const [subsHeight, setSubsHeight] = useState(320);
   const subsResizingRef = useRef(false);
   const subsContainerRef = useRef<HTMLUListElement | null>(null);
+  const initialSubsHeightSet = useRef(false);
+
+  const sortedPlayers = sortPlayers(players);
+  const starters = sortedPlayers.filter((player) => player.is_starter);
+  const subs = sortedPlayers.filter((player) => !player.is_starter);
+
+  useEffect(() => {
+    if (subs.length === 0 || initialSubsHeightSet.current) return;
+
+    const rowHeight = 56; // approximate row height, including borders/padding
+    const headerHeight = 56;
+    const maxHeight = 520;
+    const initialHeight = Math.min(maxHeight, headerHeight + subs.length * rowHeight);
+
+    setSubsHeight(initialHeight);
+    initialSubsHeightSet.current = true;
+  }, [subs.length]);
 
   useEffect(() => {
     function handleMouseMove(event: MouseEvent) {
@@ -49,7 +66,7 @@ export function PlayerList({ players, teamId }: PlayerListProps) {
       const panel = subsContainerRef.current;
       if (!panel) return;
       const listTop = panel.getBoundingClientRect().top;
-      const newHeight = Math.max(120, Math.min(640, event.clientY - listTop));
+      const newHeight = Math.max(160, Math.min(520, event.clientY - listTop));
       setSubsHeight(newHeight);
     }
 
@@ -68,10 +85,6 @@ export function PlayerList({ players, teamId }: PlayerListProps) {
   if (players.length === 0) {
     return <p className="text-gray-500 p-6">No players yet. Add your first player above.</p>;
   }
-
-  const sortedPlayers = sortPlayers(players);
-  const starters = sortedPlayers.filter((player) => player.is_starter);
-  const subs = sortedPlayers.filter((player) => !player.is_starter);
 
   return (
     <div className="space-y-6">
@@ -122,12 +135,12 @@ export function PlayerList({ players, teamId }: PlayerListProps) {
               className="divide-y divide-gray-100 rounded-xl bg-white shadow-sm overflow-y-auto"
               style={{ height: `${subsHeight}px` }}
             >
-              <li className="sticky top-0 z-10 grid grid-cols-[40px_minmax(0,1fr)_96px_96px_64px] items-center gap-4 bg-white px-6 py-3 text-xs uppercase tracking-[0.12em] text-slate-500 shadow-sm">
+              <li className="sticky top-0 z-10 grid grid-cols-1 gap-3 md:grid-cols-[40px_minmax(0,1fr)_96px_96px_64px] md:items-center bg-white px-6 py-3 text-xs uppercase tracking-[0.12em] text-slate-500 shadow-sm">
                 <span>#</span>
                 <span>Player</span>
-                <span className="text-center">Pos</span>
-                <span className="text-center">Status</span>
-                <span className="text-center">Actions</span>
+                <span className="lg:text-center">Pos</span>
+                <span className="lg:text-center">Status</span>
+                <span className="lg:text-center">Actions</span>
               </li>
               {subs.map((player) => (
                 <PlayerRow key={player.id} player={player} teamId={teamId} players={players} />

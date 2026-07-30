@@ -6,7 +6,7 @@ export function LoginPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8 md:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <div className="flex flex-col items-center gap-6 px-4 py-6 sm:px-6 sm:py-8">
           <div className="text-center">
