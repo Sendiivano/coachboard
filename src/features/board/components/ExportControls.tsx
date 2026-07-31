@@ -2,7 +2,7 @@ import type { RefObject } from 'react';
 import { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import type Konva from 'konva';
-import { Button } from '@/components/ui/Button';
+// Button not needed — using native select dropdown for export actions
 
 interface ExportControlsProps {
   stageRef: RefObject<Konva.Stage | null>;

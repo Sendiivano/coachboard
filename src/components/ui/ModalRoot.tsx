@@ -12,7 +12,7 @@ interface PromptBodyProps {
 
 interface SelectBodyProps {
   options: Array<{ value: string; label: string; group?: string }>;
-  defaultValue?: string;
+  defaultValue?: string | undefined;
   onSubmit: (value: string) => void;
   onCancel: () => void;
 }
@@ -59,7 +59,7 @@ function SelectBody({ options, defaultValue, onSubmit, onCancel }: SelectBodyPro
                 </div>
               )}
               <div className="space-y-2">
-                {groupedOptions[group].map((option) => (
+                {(groupedOptions[group] ?? []).map((option) => (
                   <label key={option.value} className="flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm hover:border-brand-500">
                     <input
                       type="radio"
